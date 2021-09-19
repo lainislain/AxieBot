@@ -38,7 +38,7 @@ def run_query() :
     return response
 
 
-#def buy_axie():
+def buy_axie():
 
 
 
@@ -51,7 +51,7 @@ def select_axie(data, priceUsd):
     for axies in data:
         #if float(axies['auction']['currentPriceUSD']) <= priceUsd:
         print("Axie {} with current price of {} Usd, seller is : {}".format(axies['id'], axies['auction']['currentPriceUSD'], axies['auction']['seller']))
-            #buy_axie()
+        #buy_axie()
 
 
 
