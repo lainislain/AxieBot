@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 import json
-
+from web3 import Web3
 # header 
 
 
@@ -27,7 +27,7 @@ def run_query() :
 
     # variables and query // size is how many axies u want to get
 
-    data = '{"operationName":"GetAxieLatest","variables":{"from":0,"size":15,"sort":"Latest","auctionType":"Sale"},"query":"query GetAxieLatest($auctionType: AuctionType, $criteria: AxieSearchCriteria, $from: Int, $sort: SortBy, $size: Int, $owner: String) {\\n axies(auctionType: $auctionType, criteria: $criteria, from: $from, sort: $sort, size: $size, owner: $owner) {\\n total\\n results {\\n ...AxieRowData\\n __typename\\n }\\n __typename\\n }\\n}\\n\\nfragment AxieRowData on Axie {\\n id\\n image\\n class\\n name\\n genes\\n owner\\n class\\n stage\\n title\\n breedCount\\n level\\n parts {\\n ...AxiePart\\n __typename\\n }\\n stats {\\n ...AxieStats\\n __typename\\n }\\n auction {\\n ...AxieAuction\\n __typename\\n }\\n __typename\\n}\\n\\nfragment AxiePart on AxiePart {\\n id\\n name\\n class\\n type\\n specialGenes\\n stage\\n abilities {\\n ...AxieCardAbility\\n __typename\\n }\\n __typename\\n}\\n\\nfragment AxieCardAbility on AxieCardAbility {\\n id\\n name\\n attack\\n defense\\n energy\\n description\\n backgroundUrl\\n effectIconUrl\\n __typename\\n}\\n\\nfragment AxieStats on AxieStats {\\n hp\\n speed\\n skill\\n morale\\n __typename\\n}\\n\\nfragment AxieAuction on Auction {\\n startingPrice\\n endingPrice\\n startingTimestamp\\n endingTimestamp\\n duration\\n timeLeft\\n currentPrice\\n currentPriceUSD\\n suggestedPrice\\n seller\\n listingIndex\\n state\\n __typename\\n}\\n"}'
+    data = '{"operationName":"GetAxieLatest","variables":{"from":0,"size":150,"sort":"Latest","auctionType":"Sale"},"query":"query GetAxieLatest($auctionType: AuctionType, $criteria: AxieSearchCriteria, $from: Int, $sort: SortBy, $size: Int, $owner: String) {\\n axies(auctionType: $auctionType, criteria: $criteria, from: $from, sort: $sort, size: $size, owner: $owner) {\\n total\\n results {\\n ...AxieRowData\\n __typename\\n }\\n __typename\\n }\\n}\\n\\nfragment AxieRowData on Axie {\\n id\\n image\\n class\\n name\\n genes\\n owner\\n class\\n stage\\n title\\n breedCount\\n level\\n parts {\\n ...AxiePart\\n __typename\\n }\\n stats {\\n ...AxieStats\\n __typename\\n }\\n auction {\\n ...AxieAuction\\n __typename\\n }\\n __typename\\n}\\n\\nfragment AxiePart on AxiePart {\\n id\\n name\\n class\\n type\\n specialGenes\\n stage\\n abilities {\\n ...AxieCardAbility\\n __typename\\n }\\n __typename\\n}\\n\\nfragment AxieCardAbility on AxieCardAbility {\\n id\\n name\\n attack\\n defense\\n energy\\n description\\n backgroundUrl\\n effectIconUrl\\n __typename\\n}\\n\\nfragment AxieStats on AxieStats {\\n hp\\n speed\\n skill\\n morale\\n __typename\\n}\\n\\nfragment AxieAuction on Auction {\\n startingPrice\\n endingPrice\\n startingTimestamp\\n endingTimestamp\\n duration\\n timeLeft\\n currentPrice\\n currentPriceUSD\\n suggestedPrice\\n seller\\n listingIndex\\n state\\n __typename\\n}\\n"}'
 
     # sending Post request with data and headers
 
@@ -40,7 +40,10 @@ def run_query() :
 
 def buy_axie():
 
+    ganache_url = 'HTTP://127.0.0.1:7545'
+    w = Web3(Web3.HTTPProvider(ganache_url))
 
+    print(w.eth.get_block('latest'))
 
 def select_axie(data, priceUsd):
 
@@ -55,9 +58,9 @@ def select_axie(data, priceUsd):
 
 
 
-data = run_query()
-select_axie(data, 500)
-#buy_axie()
+#data = run_query()
+#select_axie(data, 500)
+buy_axie()
 
 # printing data to screen 
 #print(data)
