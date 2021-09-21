@@ -2,6 +2,8 @@ import requests
 import pandas as pd
 import json
 from web3 import Web3
+from solcx import compile_source
+
 # header 
 
 
@@ -37,13 +39,58 @@ def run_query() :
     response = response.json()
     return response
 
-
 def buy_axie():
 
-    ganache_url = 'HTTP://127.0.0.1:7545'
-    w = Web3(Web3.HTTPProvider(ganache_url))
+    content = """
+    [
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                },
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "name": "settleAuction",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        }
+    ]
+    """
+    contract_abi = json.loads(content)
+    contract_address = '0x213073989821f738a7ba3520c3d31a1f9ad31bbd'
 
-    print(w.eth.get_block('latest'))
+    contract_address = Web3.toChecksumAddress(contract_address)
+    # use infura 
+    provider_url = ''
+    w = Web3(Web3.HTTPProvider(provider_url))
+    
+    contract = w.eth.contract(abi=contract_abi, address=contract_address)
+
+    contract.settleAuction()
+    print(tx_hash)
+
 
 def select_axie(data, priceUsd):
 
@@ -61,7 +108,7 @@ def select_axie(data, priceUsd):
 #data = run_query()
 #select_axie(data, 500)
 buy_axie()
-
+#print(contract_abi)
 # printing data to screen 
 #print(data)
 
