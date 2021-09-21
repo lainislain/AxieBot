@@ -1,9 +1,11 @@
 import requests
-import pandas as pd
+#import pandas as pd
 import json
 from web3 import Web3
 # header 
 
+def sort_by_price(data):
+    return data['auction']['currentPriceUSD']
 
 def run_query() :
     """
@@ -51,16 +53,17 @@ def select_axie(data, priceUsd):
     # each axie have it's
     # ['id', 'image', 'class', 'name', 'genes', 'owner', 'stage', 'title', 'breedCount', 'level', 'parts', 'stats', 'auction', '__typename']
     data = data['data']['axies']['results']
-    for axies in data:
+    for axie in data:
         #if float(axies['auction']['currentPriceUSD']) <= priceUsd:
-        print("Axie {} with current price of {} Usd, seller is : {}".format(axies['id'], axies['auction']['currentPriceUSD'], axies['auction']['seller']))
+        print(f"Axie {axie['id']} with current price of {axie['auction']['currentPriceUSD']} Usd, with breed count {axie['breedCount']}")
+        #print("Axie {} with current price of {} Usd, seller is : {}".format(axies['id'], axies['auction']['currentPriceUSD'], axies['auction']['seller']))
         #buy_axie()
 
 
 
-#data = run_query()
-#select_axie(data, 500)
-buy_axie()
+data = run_query()
+select_axie(data, 500)
+#buy_axie()
 
 # printing data to screen 
 #print(data)
