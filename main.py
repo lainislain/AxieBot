@@ -1,3 +1,4 @@
+
 import requests
 import pandas as pd
 import json
@@ -124,4 +125,3 @@ buy_axie(select_axie(data, 300))
 #rawData = pd.DataFrame(response, columns=['id', 'image', 'class', 'name', 'genes', 'owner', 'stage', 'title', 'breedCount', 'level', 'parts', 'stats', 'auction', '__typename'])
 
 #print( rawData )
-
