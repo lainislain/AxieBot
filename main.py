@@ -29,7 +29,7 @@ def run_query() :
 
     # variables and query // size is how many axies u want to get
 
-    data = '{"operationName":"GetAxieLatest","variables":{"from":0,"size":150,"sort":"Latest","auctionType":"Sale"},"query":"query GetAxieLatest($auctionType: AuctionType, $criteria: AxieSearchCriteria, $from: Int, $sort: SortBy, $size: Int, $owner: String) {\\n axies(auctionType: $auctionType, criteria: $criteria, from: $from, sort: $sort, size: $size, owner: $owner) {\\n total\\n results {\\n ...AxieRowData\\n __typename\\n }\\n __typename\\n }\\n}\\n\\nfragment AxieRowData on Axie {\\n id\\n image\\n class\\n name\\n genes\\n owner\\n class\\n stage\\n title\\n breedCount\\n level\\n parts {\\n ...AxiePart\\n __typename\\n }\\n stats {\\n ...AxieStats\\n __typename\\n }\\n auction {\\n ...AxieAuction\\n __typename\\n }\\n __typename\\n}\\n\\nfragment AxiePart on AxiePart {\\n id\\n name\\n class\\n type\\n specialGenes\\n stage\\n abilities {\\n ...AxieCardAbility\\n __typename\\n }\\n __typename\\n}\\n\\nfragment AxieCardAbility on AxieCardAbility {\\n id\\n name\\n attack\\n defense\\n energy\\n description\\n backgroundUrl\\n effectIconUrl\\n __typename\\n}\\n\\nfragment AxieStats on AxieStats {\\n hp\\n speed\\n skill\\n morale\\n __typename\\n}\\n\\nfragment AxieAuction on Auction {\\n startingPrice\\n endingPrice\\n startingTimestamp\\n endingTimestamp\\n duration\\n timeLeft\\n currentPrice\\n currentPriceUSD\\n suggestedPrice\\n seller\\n listingIndex\\n state\\n __typename\\n}\\n"}'
+    data = '{"operationName":"GetAxieLatest","variables":{"from":0,"size":15,"sort":"Latest","auctionType":"Sale"},"query":"query GetAxieLatest($auctionType: AuctionType, $criteria: AxieSearchCriteria, $from: Int, $sort: SortBy, $size: Int, $owner: String) {\\n axies(auctionType: $auctionType, criteria: $criteria, from: $from, sort: $sort, size: $size, owner: $owner) {\\n total\\n results {\\n ...AxieRowData\\n __typename\\n }\\n __typename\\n }\\n}\\n\\nfragment AxieRowData on Axie {\\n id\\n image\\n class\\n name\\n genes\\n owner\\n class\\n stage\\n title\\n breedCount\\n level\\n parts {\\n ...AxiePart\\n __typename\\n }\\n stats {\\n ...AxieStats\\n __typename\\n }\\n auction {\\n ...AxieAuction\\n __typename\\n }\\n __typename\\n}\\n\\nfragment AxiePart on AxiePart {\\n id\\n name\\n class\\n type\\n specialGenes\\n stage\\n abilities {\\n ...AxieCardAbility\\n __typename\\n }\\n __typename\\n}\\n\\nfragment AxieCardAbility on AxieCardAbility {\\n id\\n name\\n attack\\n defense\\n energy\\n description\\n backgroundUrl\\n effectIconUrl\\n __typename\\n}\\n\\nfragment AxieStats on AxieStats {\\n hp\\n speed\\n skill\\n morale\\n __typename\\n}\\n\\nfragment AxieAuction on Auction {\\n startingPrice\\n endingPrice\\n startingTimestamp\\n endingTimestamp\\n duration\\n timeLeft\\n currentPrice\\n currentPriceUSD\\n suggestedPrice\\n seller\\n listingIndex\\n state\\n __typename\\n}\\n"}'
 
     # sending Post request with data and headers
 
@@ -39,7 +39,7 @@ def run_query() :
     response = response.json()
     return response
 
-def buy_axie():
+def buy_axie(axie):
 
     content = """
     [
@@ -82,14 +82,17 @@ def buy_axie():
     contract_address = '0x213073989821f738a7ba3520c3d31a1f9ad31bbd'
 
     contract_address = Web3.toChecksumAddress(contract_address)
+    weth_address = '0xc99a6a985ed2cac1ef41640596c5a5f9f4e19ef5'
+    weth_address = Web3.toChecksumAddress(weth_address)
     # use infura 
     provider_url = ''
     w = Web3(Web3.HTTPProvider(provider_url))
     
     contract = w.eth.contract(abi=contract_abi, address=contract_address)
 
-    contract.settleAuction()
-    print(tx_hash)
+    # _seller, _token(RONIN WETH CONTRACT), _bidAmount, _listingIndex, _listingState
+    data = contract.functions.settleAuction(Web3.toChecksumAddress(axie['auction']['seller']), weth_address, int(axie['auction']['currentPrice']), int(axie['auction']['listingIndex']), int(axie['auction']['state']))
+    print(contract.encodeABI(fn_name='settleAuction'))
 
 
 def select_axie(data, priceUsd):
@@ -101,13 +104,13 @@ def select_axie(data, priceUsd):
     for axies in data:
         #if float(axies['auction']['currentPriceUSD']) <= priceUsd:
         print("Axie {} with current price of {} Usd, seller is : {}".format(axies['id'], axies['auction']['currentPriceUSD'], axies['auction']['seller']))
-        #buy_axie()
+        print(axies)
+        return axies
 
 
 
-#data = run_query()
-#select_axie(data, 500)
-buy_axie()
+data = run_query()
+buy_axie(select_axie(data, 300))
 #print(contract_abi)
 # printing data to screen 
 #print(data)
