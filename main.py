@@ -3,7 +3,6 @@ import requests
 import pandas as pd
 import json
 from web3 import Web3
-from solcx import compile_source
 
 # header 
 
@@ -80,20 +79,27 @@ def buy_axie(axie):
     ]
     """
     contract_abi = json.loads(content)
-    contract_address = '0x213073989821f738a7ba3520c3d31a1f9ad31bbd'
+    contract_address = '213073989821f738a7ba3520c3d31a1f9ad31bbd'
 
     contract_address = Web3.toChecksumAddress(contract_address)
-    weth_address = '0xc99a6a985ed2cac1ef41640596c5a5f9f4e19ef5'
+    weth_address = 'c99a6a985ed2cac1ef41640596c5a5f9f4e19ef5'
     weth_address = Web3.toChecksumAddress(weth_address)
     # use infura 
-    provider_url = ''
+    provider_url = 'https://mainnet.infura.io/v3/7ebee7fa80ca4bbf99ba10a277e44754'
     w = Web3(Web3.HTTPProvider(provider_url))
     
     contract = w.eth.contract(abi=contract_abi, address=contract_address)
 
     # _seller, _token(RONIN WETH CONTRACT), _bidAmount, _listingIndex, _listingState
     data = contract.functions.settleAuction(Web3.toChecksumAddress(axie['auction']['seller']), weth_address, int(axie['auction']['currentPrice']), int(axie['auction']['listingIndex']), int(axie['auction']['state']))
-    print(contract.encodeABI(fn_name='settleAuction'))
+    encoded_data = contract.encodeABI(fn_name='settleAuction', args=[Web3.toChecksumAddress(axie['auction']['seller']), weth_address, int(axie['auction']['currentPrice']), int(axie['auction']['listingIndex']), int(axie['auction']['state'])])
+
+    print(encoded_data)
+    nonce = w.eth.getTransactionCount(contract_address)
+    print(nonce)
+    # connect ronin  rpc 
+
+
 
 
 def select_axie(data, priceUsd):
@@ -111,7 +117,8 @@ def select_axie(data, priceUsd):
 
 
 data = run_query()
-buy_axie(select_axie(data, 300))
+axie = select_axie(data, 500)
+buy_axie(axie)
 #print(contract_abi)
 # printing data to screen 
 #print(data)
