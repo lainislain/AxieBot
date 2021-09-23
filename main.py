@@ -79,13 +79,13 @@ def buy_axie(axie):
     ]
     """
     contract_abi = json.loads(content)
-    contract_address = '213073989821f738a7ba3520c3d31a1f9ad31bbd'
+    contract_address = '0x213073989821f738a7ba3520c3d31a1f9ad31bbd'
 
     contract_address = Web3.toChecksumAddress(contract_address)
-    weth_address = 'c99a6a985ed2cac1ef41640596c5a5f9f4e19ef5'
+    weth_address = '0xc99a6a985ed2cac1ef41640596c5a5f9f4e19ef5'
     weth_address = Web3.toChecksumAddress(weth_address)
     # use infura 
-    provider_url = 'https://mainnet.infura.io/v3/7ebee7fa80ca4bbf99ba10a277e44754'
+    provider_url = ''
     w = Web3(Web3.HTTPProvider(provider_url))
     
     contract = w.eth.contract(abi=contract_abi, address=contract_address)
@@ -95,11 +95,33 @@ def buy_axie(axie):
     encoded_data = contract.encodeABI(fn_name='settleAuction', args=[Web3.toChecksumAddress(axie['auction']['seller']), weth_address, int(axie['auction']['currentPrice']), int(axie['auction']['listingIndex']), int(axie['auction']['state'])])
 
     print(encoded_data)
-    nonce = w.eth.getTransactionCount(contract_address)
+
+
+    # account Ronin wallet address  + private key
+    account = ''
+    private_key = ''
+
+    account = Web3.toChecksumAddress(account)
+    nonce = w.eth.getTransactionCount(account)
     print(nonce)
     # connect ronin  rpc 
 
 
+    #build a transaction in a dictionary
+    transaction = {
+        'from': account,
+        'to': contract_address,
+        'value': 0,
+        'gas': 407375,
+        'gasPrice':0,
+        'nonce': nonce,
+        'data': encoded_data
+    }
+    signed_tx = w.eth.account.sign_transaction(transaction, private_key)
+    tx_hash = w.eth.send_raw_transaction(signed_tx.rawTransaction)
+    
+    
+    print(Web3.toHex(tx_hash))
 
 
 def select_axie(data, priceUsd):
