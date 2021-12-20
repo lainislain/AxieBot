@@ -12,7 +12,7 @@ This project is under development, you'll have to update the project as much as 
 
 ## Start script
 
-"`start main.py`"  
+`start main.py` 
 
 ## Donation
 
