@@ -4,8 +4,6 @@ import pandas as pd
 import json
 from web3 import Web3
 
-# header 
-
 
 def run_query() :
     """
